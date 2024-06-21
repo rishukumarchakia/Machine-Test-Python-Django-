@@ -19,7 +19,13 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
 
     class meta:
         model =Project
-        fields =[]
+        fields = ['id', 'project_name', 'client', 'users', 'created_at', 'created_by']
+
+    def create(self, validated_data):
+        users = validated_data.pop('users')
+        project = Project.objects.create(**validated_data)
+        project.users.set(users)
+        return project
 
 class ProjectSerializer(serializers.ModelSerializer):
     client = serializers.StringRelatedField(read_only=True)
