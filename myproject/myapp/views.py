@@ -29,7 +29,10 @@ class ProjectCreateView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        client = Client.objects.get(id=self.request.data['client_id'])
+          client_id =self.request.data.get('client_id')
+        if not client_id:
+            return Response({'error':'client_id is required'},status=status.HTTP_400_BAD_REQUEST)
+        client = Client.objects.get(id=client_id)
         serializer.save(client=client, created_by=self.request.user)
 class ProjectDetailsView(generics.RetrieveDestroyAPIView):
     queryset = Project.objects.all()
